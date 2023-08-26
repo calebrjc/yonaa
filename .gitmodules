@@ -1,0 +1,6 @@
+[submodule "external/bitmask"]
+	path = external/bitmask
+	url = https://github.com/oliora/bitmask
+[submodule "external/spdlog"]
+	path = external/spdlog
+	url = https://github.com/gabime/spdlog
