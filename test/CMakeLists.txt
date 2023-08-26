@@ -18,12 +18,12 @@ set(TESTS
     "test_utils/test_utils.hpp"
     "test_utils/test_utils.cpp")
 
-add_executable(test_runner ${TESTS})
-target_link_libraries(test_runner PRIVATE yonaa Catch2::Catch2WithMain pthread)
-target_compile_options(test_runner PRIVATE -g -Wall -Wextra --pedantic-errors)
+add_executable(yonaa_tests ${TESTS})
+target_link_libraries(yonaa_tests PRIVATE yonaa Catch2::Catch2WithMain pthread)
+target_compile_options(yonaa_tests PRIVATE -g -Wall -Wextra --pedantic-errors)
 
 # Automatically register Catch2 tests
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
-catch_discover_tests(test_runner)
+catch_discover_tests(yonaa_tests)
