@@ -27,6 +27,10 @@ struct buffer {
     template<typename T, size_t N>
     explicit buffer(T (&data)[N]) : buffer(data, sizeof(T) * (N - 1)) {}
 
+    /// @brief Create a buffer from an existing std::string.
+    /// @param data The std::string with the data to be contained by the buffer.
+    explicit buffer(const std::string &data) : buffer(data.data(), data.size()) {}
+
    public:
     /// @brief Return the data contained by this buffer.
     /// @return The data contained by this buffer.
