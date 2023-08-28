@@ -130,6 +130,10 @@ class connection {
     /// @return True if this connection has established a connection with a remote endpoint.
     bool is_connected() const;
 
+    /// @brief Return true if there is data available to read from this connection.
+    /// @return True if there is data available to read from this connection.
+    bool has_data_available() const;
+
     /// @brief Return the native socket associated with this connection.
     /// @return The native socket associated with this connection.
     socket_type native_socket() const;

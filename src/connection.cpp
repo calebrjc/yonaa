@@ -1,5 +1,6 @@
 #include "yonaa/connection.hpp"
 
+#include "yonaa/detail/poll.hpp"
 #include "yonaa/detail/socket_ops.hpp"
 
 namespace yonaa {
@@ -175,6 +176,11 @@ buffer connection::receive(size_t size, std::error_code &ec, receive_flags_mask 
 bool connection::is_connected() const {
     // Note(Caleb): socket_ is only assigned after a connect(), so this is fine.
     return socket_ != 0;
+}
+
+bool connection::has_data_available() const {
+    auto status = detail::poll_socket(socket_);
+    return (bool)(status & detail::socket_status::readable);
 }
 
 socket_type connection::native_socket() const {

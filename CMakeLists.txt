@@ -22,11 +22,12 @@ set(YONAA_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/acceptor.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/addresses.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/buffer.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/client.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/connection.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/endpoint.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/resolve.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/types.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/server.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/types.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/detail/getaddrinfo.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/detail/poll.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/detail/sockaddr_ops.hpp"
@@ -34,6 +35,7 @@ set(YONAA_HEADERS
 
 set(YONAA_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/acceptor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/connection.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/endpoint.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/resolve.cpp"

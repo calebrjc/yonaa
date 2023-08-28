@@ -10,13 +10,14 @@ FetchContent_MakeAvailable(Catch2)
 
 # Create tests target
 set(TESTS
-    "acceptor.test.cpp"
-    "connection.test.cpp"
-    "resolve.test.cpp"
-    "detail/poll.test.cpp"
-    "detail/socket_ops.test.cpp"
-    "test_utils/test_utils.hpp"
-    "test_utils/test_utils.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/acceptor.test.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/client.test.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/connection.test.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resolve.test.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/detail/poll.test.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/detail/socket_ops.test.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_utils/test_utils.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_utils/test_utils.cpp")
 
 add_executable(yonaa_tests ${TESTS})
 target_link_libraries(yonaa_tests PRIVATE yonaa Catch2::Catch2WithMain pthread)
