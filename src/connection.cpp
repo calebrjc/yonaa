@@ -103,7 +103,7 @@ void connection::send(const buffer &data, std::error_code &ec, send_flags_mask f
     size_t bytes_sent = 0;
     while (bytes_sent < send_buffer_size) {
         int send_result =
-            ::send(socket_, send_buffer + bytes_sent, send_buffer_size - bytes_sent, send_flags);
+            ::send(socket_, send_buffer + bytes_sent, send_buffer_size - bytes_sent, send_flags | MSG_NOSIGNAL);
 
         if (send_result == -1) {
             // TODO(Caleb): Custom error categories?

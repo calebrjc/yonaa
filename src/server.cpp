@@ -147,7 +147,7 @@ void server::handle_incoming_connections_() {
         on_client_connect_(new_client_id);
     }
 
-#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG
+#if SPDLOG_ACTIVE_LEVEL < SPDLOG_LEVEL_INFO
     SPDLOG_TRACE("{} active clients", clients_.size());
     if (clients_.size() > 0) {
         for (const auto &client : clients_) { SPDLOG_TRACE("\t{}", *client); }
@@ -171,15 +171,14 @@ void server::handle_incoming_messages_() {
             continue;
         }
 
-        if (status
-            & (yonaa::detail::socket_status::error | yonaa::detail::socket_status::hung_up)) {
+        if (status & (detail::socket_status::error | detail::socket_status::hung_up)) {
             // Assume that the client has disconnected
             SPDLOG_DEBUG("Handling socket error for {}. Marking for removal", *client);
             remove_client(client->id);
             continue;
         }
 
-        if (status & yonaa::detail::socket_status::readable) {
+        if (status & detail::socket_status::readable) {
             SPDLOG_DEBUG("Handling readable event for fd={} for client {}", socket_fd, *client);
             buffer data = client->conn.receive(ec_);
 
