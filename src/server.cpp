@@ -190,7 +190,7 @@ void server::handle_incoming_messages_() {
             }
 
             // Notify the user that the client sent some data
-            on_data_receive_(data, client->id);
+            on_data_receive_(client->id, data);
         }
     }
 }

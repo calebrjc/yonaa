@@ -33,7 +33,7 @@ class server final {
    public:
     /// @brief The signature for a callback function supplied to the server to be called when
     /// incoming data is received from a particular client.
-    using data_receive_handler = std::function<void(const buffer &, client_id)>;
+    using data_receive_handler = std::function<void(client_id, const buffer &)>;
 
     /// @brief The signature for a callback function supplied to the server to be called when a
     /// client connects to the server.
