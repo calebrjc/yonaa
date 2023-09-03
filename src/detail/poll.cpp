@@ -23,7 +23,7 @@ socket_status_mask ssm_from_revents(int revents) {
 }  // namespace detail
 
 socket_status_mask poll_socket(socket_type socket_fd, int timeout_millis) {
-    pollfd pfd = {0};
+    pollfd pfd = {0, 0, 0};
     pfd.fd     = socket_fd;
     pfd.events = POLLIN | POLLOUT;
 
@@ -38,7 +38,7 @@ poll_group::poll_group(socket_status_mask config) {
 }
 
 void poll_group::add_socket(socket_type socket_fd) {
-    pollfd pfd = {0};
+    pollfd pfd = {0, 0, 0};
     pfd.fd     = socket_fd;
     pfd.events = pfd_config_;
 
@@ -51,7 +51,7 @@ void poll_group::remove_socket(socket_type socket_fd) {
 }
 
 poll_result poll_group::poll(int timeout_millis) {
-    int num_events = ::poll(pfds_.data(), pfds_.size(), timeout_millis);
+    (void)::poll(pfds_.data(), pfds_.size(), timeout_millis);
 
     poll_result result;
     for (const pollfd &pfd : pfds_) {

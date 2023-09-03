@@ -20,7 +20,7 @@ set(TESTS
     "${CMAKE_CURRENT_SOURCE_DIR}/test_utils/test_utils.cpp")
 
 add_executable(yonaa_tests ${TESTS})
-target_link_libraries(yonaa_tests PRIVATE yonaa Catch2::Catch2WithMain pthread)
+target_link_libraries(yonaa_tests PRIVATE yonaa Catch2::Catch2WithMain)
 target_compile_options(yonaa_tests PRIVATE -g -Wall -Wextra --pedantic-errors)
 
 # Automatically register Catch2 tests

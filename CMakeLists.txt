@@ -6,15 +6,18 @@ project(
     LANGUAGES C CXX
 )
 
+# Build options
+option(YONAA_BUILD_TESTS "Build tests" OFF)
+
 # Ensure -std=c++xx instead of -std=g++xx
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Ensure folder support in IDEs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# Add external libs
-
+# Add external libs and dependencies
 add_subdirectory(external)
+find_package(Threads REQUIRED)
 
 # Add files
 set(YONAA_HEADERS
@@ -51,7 +54,7 @@ add_library(yonaa ${YONAA_HEADERS} ${YONAA_SOURCES})
 target_include_directories(yonaa PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 target_link_libraries(yonaa
-    PUBLIC bitmask 
+    PUBLIC bitmask Threads::Threads 
     PRIVATE spdlog)
 
 target_compile_features(yonaa PUBLIC cxx_std_17)
@@ -59,7 +62,7 @@ target_compile_features(yonaa PUBLIC cxx_std_17)
 target_compile_options(yonaa PRIVATE -Wall -Wextra --pedantic-errors)
 
 # Conditionally enable tests
-if(BUILD_TESTING)
+if(YONAA_BUILD_TESTS)
     add_subdirectory(test)
     enable_testing()
 endif()
