@@ -54,8 +54,7 @@ add_library(yonaa ${YONAA_HEADERS} ${YONAA_SOURCES})
 target_include_directories(yonaa PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 target_link_libraries(yonaa
-    PUBLIC bitmask Threads::Threads 
-    PRIVATE spdlog)
+    PUBLIC bitmask spdlog Threads::Threads)
 
 target_compile_features(yonaa PUBLIC cxx_std_17)
 
