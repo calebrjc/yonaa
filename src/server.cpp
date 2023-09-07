@@ -1,9 +1,8 @@
 #include "yonaa/server.hpp"
 
-#include <spdlog/spdlog.h>
-
 #include "yonaa/addresses.hpp"
 #include "yonaa/resolve.hpp"
+#include "yonaa/logging.hpp"
 
 namespace yonaa {
 
@@ -21,7 +20,7 @@ server::server(uint16_t port)
 
 server::~server() {
     if (network_thread_.joinable()) {
-        SPDLOG_TRACE("Joining the network thread");
+        YONAA_TRACE("Joining the network thread");
         network_thread_.join();
     }
 }
@@ -30,13 +29,13 @@ void server::run() {
     if (running_) return;
 
     // Start network thread
-    SPDLOG_TRACE("Spawning network thread");
+    YONAA_TRACE("Spawning network thread");
     network_thread_ = std::thread(&server::network_thread_function_, this);
 }
 
 void server::stop() {
     running_ = false;
-    SPDLOG_TRACE("Stop signal received");
+    YONAA_TRACE("Stop signal received");
 }
 
 void server::set_data_receive_handler(const data_receive_handler &handler) {
@@ -71,17 +70,17 @@ void server::message_all_clients(const buffer &msg, client_id exclude_client_id)
 }
 
 void server::remove_client(client_id client_id) {
-    SPDLOG_TRACE("Attempting to mark client {} for removal", client_id);
+    YONAA_TRACE("Attempting to mark client {} for removal", client_id);
 
     client_info *client = client_info_from_id(client_id);
     if (!client) {
-        SPDLOG_WARN("Removal failed: could not find information for client {}", client_id);
+        YONAA_WARN("Removal failed: could not find information for client {}", client_id);
         return;
     }
 
     client->is_connected      = false;
     has_disconnected_clients_ = true;
-    SPDLOG_DEBUG("Successfully marked client {} for removal", client_id);
+    YONAA_DEBUG("Successfully marked client {} for removal", client_id);
 }
 
 /// @brief Run the network operations associated with this server.
@@ -91,7 +90,7 @@ void server::network_thread_function_() {
     // Open the acceptor on the user's port
     resolve_result endpoints = resolve(any_address, std::to_string(port_), ec_);
     if (ec_) {
-        SPDLOG_ERROR(
+        YONAA_ERROR(
             "Unable to resolve the local address: {}:{}", any_address, std::to_string(port_));
         std::exit(EXIT_FAILURE);
     }
@@ -99,7 +98,7 @@ void server::network_thread_function_() {
     // TODO(Caleb): Make reuse_address an option in the API
     acceptor_.open(endpoints, ec_, acceptor_config::reuse_address);
     if (ec_) {
-        SPDLOG_ERROR("Unable to open an acceptor");
+        YONAA_ERROR("Unable to open an acceptor");
         std::exit(EXIT_FAILURE);
     }
 
@@ -113,7 +112,7 @@ void server::network_thread_function_() {
     }
 
     acceptor_.close();
-    SPDLOG_TRACE("Network thread ended");
+    YONAA_TRACE("Network thread ended");
 }
 
 /// @brief Accept all currently pending connections and, add them as clients to the server.
@@ -122,7 +121,7 @@ void server::handle_incoming_connections_() {
         if (!acceptor_.has_pending_connection()) break;
 
         client_id new_client_id = next_available_id++;
-        SPDLOG_DEBUG("Connection request received. Attempting to create client {}", new_client_id);
+        YONAA_DEBUG("Connection request received. Attempting to create client {}", new_client_id);
 
         // Create the new client
         auto new_client  = std::make_unique<client_info>();
@@ -131,7 +130,7 @@ void server::handle_incoming_connections_() {
         new_client->fd   = new_client->conn.native_socket();
 
         if (ec_) {
-            SPDLOG_WARN("Error accepting a connection; unable to create client {}", new_client_id);
+            YONAA_WARN("Error accepting a connection; unable to create client {}", new_client_id);
             next_available_id--;
 
             continue;
@@ -143,14 +142,14 @@ void server::handle_incoming_connections_() {
         poll_group_.add_socket(clients_.back()->fd);
 
         // Notify the user that a new client has connected
-        SPDLOG_DEBUG("Client {} created: {}", new_client_id, *clients_.back());
+        YONAA_DEBUG("Client {} created: {}", new_client_id, *clients_.back());
         on_client_connect_(new_client_id);
     }
 
-#if SPDLOG_ACTIVE_LEVEL < SPDLOG_LEVEL_INFO
-    SPDLOG_TRACE("{} active clients", clients_.size());
+#if YONAA_CURRENT_LOG_LEVEL < YONAA_LOG_LEVEL_INFO
+    YONAA_TRACE("{} active clients", clients_.size());
     if (clients_.size() > 0) {
-        for (const auto &client : clients_) { SPDLOG_TRACE("\t{}", *client); }
+        for (const auto &client : clients_) { YONAA_TRACE("\t{}", *client); }
     }
 #endif
 }
@@ -162,29 +161,29 @@ void server::handle_incoming_messages_() {
     for (const auto &[socket_fd, status] : events) {
         if (!running_) return;
 
-        SPDLOG_TRACE("Handling events for fd={}, (status = {})", socket_fd, status.bits());
+        YONAA_TRACE("Handling events for fd={}, (status = {})", socket_fd, status.bits());
 
         // Figure out which client we're processing
         client_info *client = client_info_from_native_socket(socket_fd);
         if (!client) {
-            SPDLOG_ERROR("Unable to find client with fd={}", socket_fd);
+            YONAA_ERROR("Unable to find client with fd={}", socket_fd);
             continue;
         }
 
         if (status & (detail::socket_status::error | detail::socket_status::hung_up)) {
             // Assume that the client has disconnected
-            SPDLOG_DEBUG("Handling socket error for {}. Marking for removal", *client);
+            YONAA_DEBUG("Handling socket error for {}. Marking for removal", *client);
             remove_client(client->id);
             continue;
         }
 
         if (status & detail::socket_status::readable) {
-            SPDLOG_DEBUG("Handling readable event for fd={} for client {}", socket_fd, *client);
+            YONAA_DEBUG("Handling readable event for fd={} for client {}", socket_fd, *client);
             buffer data = client->conn.receive(ec_);
 
             // If the receive failed or no data was received, assume that the client disconnected
             if (ec_ || (data.size() == 0)) {
-                SPDLOG_DEBUG("Disconnect message received from {}. Marking for removal", *client);
+                YONAA_DEBUG("Disconnect message received from {}. Marking for removal", *client);
                 remove_client(client->id);
                 continue;
             }
@@ -207,7 +206,7 @@ void server::handle_disconnected_clients_() {
     for (auto it = first_disconnected_client; it != clients_.end(); it++) {
         client_info *client = it->get();
 
-        SPDLOG_TRACE("Disconnecting client: {}", *client);
+        YONAA_TRACE("Disconnecting client: {}", *client);
         poll_group_.remove_socket(client->fd);
         client->conn.disconnect();
         on_client_disconnect_(client->id);

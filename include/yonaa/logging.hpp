@@ -1,0 +1,56 @@
+#pragma once
+
+#include <spdlog/spdlog.h>
+
+// Log levels
+
+#define YONAA_LOG_LEVEL_TRACE    SPDLOG_LEVEL_TRACE
+#define YONAA_LOG_LEVEL_DEBUG    SPDLOG_LEVEL_DEBUG
+#define YONAA_LOG_LEVEL_INFO     SPDLOG_LEVEL_INFO
+#define YONAA_LOG_LEVEL_WARN     SPDLOG_LEVEL_WARN
+#define YONAA_LOG_LEVEL_ERROR    SPDLOG_LEVEL_ERROR
+#define YONAA_LOG_LEVEL_CRITICAL SPDLOG_LEVEL_CRITICAL
+#define YONAA_LOG_LEVEL_OFF      SPDLOG_LEVEL_OFF
+
+// Set the default log level to INFO if not defined
+#if !defined(YONAA_ACTIVE_LOG_LEVEL)
+#define YONAA_ACTIVE_LOG_LEVEL YONAA_LOG_LEVEL_INFO
+#endif
+
+// Log macros
+
+#if YONAA_ACTIVE_LOG_LEVEL <= YONAA_LOG_LEVEL_TRACE
+#define YONAA_TRACE(...) SPDLOG_TRACE(__VA_ARGS__)
+#else
+#define YONAA_TRACE(...)
+#endif
+
+#if YONAA_ACTIVE_LOG_LEVEL <= YONAA_LOG_LEVEL_DEBUG
+#define YONAA_DEBUG(...) SPDLOG_DEBUG(__VA_ARGS__)
+#else
+#define YONAA_DEBUG(...)
+#endif
+
+#if YONAA_ACTIVE_LOG_LEVEL <= YONAA_LOG_LEVEL_INFO
+#define YONAA_INFO(...) SPDLOG_INFO(__VA_ARGS__)
+#else
+#define YONAA_INFO(...)
+#endif
+
+#if YONAA_ACTIVE_LOG_LEVEL <= YONAA_LOG_LEVEL_WARN
+#define YONAA_WARN(...) SPDLOG_WARN(__VA_ARGS__)
+#else
+#define YONAA_WARN(...)
+#endif
+
+#if YONAA_ACTIVE_LOG_LEVEL <= YONAA_LOG_LEVEL_ERROR
+#define YONAA_ERROR(...) SPDLOG_ERROR(__VA_ARGS__)
+#else
+#define YONAA_ERROR(...)
+#endif
+
+#if YONAA_ACTIVE_LOG_LEVEL <= YONAA_LOG_LEVEL_CRITICAL
+#define YONAA_CRITICAL(...) SPDLOG_CRITICAL(__VA_ARGS__)
+#else
+#define YONAA_CRITICAL(...)
+#endif

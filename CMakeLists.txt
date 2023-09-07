@@ -28,6 +28,7 @@ set(YONAA_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/client.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/connection.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/endpoint.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/logging.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/resolve.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/server.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/yonaa/types.hpp"
@@ -54,7 +55,7 @@ add_library(yonaa ${YONAA_HEADERS} ${YONAA_SOURCES})
 target_include_directories(yonaa PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 target_link_libraries(yonaa
-    PUBLIC bitmask spdlog Threads::Threads)
+    PUBLIC Threads::Threads bitmask spdlog)
 
 target_compile_features(yonaa PUBLIC cxx_std_17)
 
