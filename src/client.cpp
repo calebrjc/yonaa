@@ -6,7 +6,7 @@
 namespace yonaa {
 client::~client() {
     if (network_thread_.joinable()) {
-        YONAA_TRACE("Joining the network thread");
+        YONAA_INTERNAL_TRACE("Joining the network thread");
         network_thread_.join();
     }
 }
@@ -26,13 +26,13 @@ void client::set_data_receive_handler(const data_receive_handler &handler) {
 void client::connect(const std::string &hostname, const std::string &service) {
     server_addr_ = {hostname, service};
 
-    YONAA_TRACE("Spawning network thread");
+    YONAA_INTERNAL_TRACE("Spawning network thread");
     network_thread_ = std::thread(&client::network_thread_function_, this);
 }
 
 void client::disconnect() {
     running_ = false;
-    YONAA_TRACE("Stop signal received");
+    YONAA_INTERNAL_TRACE("Stop signal received");
 }
 
 void client::send_message(const buffer &msg) {
@@ -47,18 +47,18 @@ bool client::is_connected() const {
 }
 
 void client::network_thread_function_() {
-    YONAA_TRACE("Network thread started");
+    YONAA_INTERNAL_TRACE("Network thread started");
 
     auto remote_endpoints = resolve(server_addr_.hostname, server_addr_.service, ec_);
     if (ec_) {
-        YONAA_ERROR(
+        YONAA_INTERNAL_ERROR(
             "Unable to resolve address: {}:{}", server_addr_.hostname, server_addr_.service);
         std::exit(EXIT_FAILURE);
     }
 
     conn_.connect(remote_endpoints, ec_);
     if (ec_) {
-        YONAA_ERROR("Unable to open a connection to the remote");
+        YONAA_INTERNAL_ERROR("Unable to open a connection to the remote");
         std::exit(EXIT_FAILURE);
     }
     on_connect_();
@@ -73,7 +73,7 @@ void client::network_thread_function_() {
     conn_.disconnect();
     on_disconnect_();
 
-    YONAA_TRACE("Network thread ended");
+    YONAA_INTERNAL_TRACE("Network thread ended");
 }
 
 void client::handle_incoming_messages_() {
@@ -87,7 +87,7 @@ void client::handle_incoming_messages_() {
     buffer data = conn_.receive(ec_);
 
     if (ec_ || (data.size() == 0)) {
-        YONAA_DEBUG("Disconnect message received");
+        YONAA_INTERNAL_DEBUG("Disconnect message received");
         on_disconnect_();
         return;
     }

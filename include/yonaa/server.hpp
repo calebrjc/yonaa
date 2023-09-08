@@ -23,12 +23,6 @@ struct client_info {
     bool is_connected = false;
 };
 
-/// @brief Return os with a string representation of client inserted.
-/// @param os The stream to insert the string representation into.
-/// @param client The client to stringify.
-/// @return os with a string representation of client inserted.
-std::ostream &operator<<(std::ostream &os, const client_info &client);
-
 class server final {
    public:
     /// @brief The signature for a callback function supplied to the server to be called when

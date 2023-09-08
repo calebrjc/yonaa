@@ -8,6 +8,7 @@ project(
 
 # Build options
 option(YONAA_BUILD_TESTS "Build tests" OFF)
+option(YONAA_ENABLE_LOGGING "Enable logging" OFF)
 
 # Ensure -std=c++xx instead of -std=g++xx
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -42,6 +43,7 @@ set(YONAA_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/connection.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/endpoint.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/logging.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/resolve.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/detail/getaddrinfo.cpp"
@@ -59,7 +61,11 @@ target_link_libraries(yonaa
 
 target_compile_features(yonaa PUBLIC cxx_std_17)
 
-target_compile_options(yonaa PRIVATE -Wall -Wextra --pedantic-errors)
+target_compile_options(yonaa PRIVATE -Wall -Wno-unknown-pragmas -Wextra --pedantic-errors)
+
+if (YONAA_ENABLE_LOGGING)
+    target_compile_definitions(yonaa PUBLIC YONAA_ENABLE_LOGGING)
+endif()
 
 # Conditionally enable tests
 if(YONAA_BUILD_TESTS)
