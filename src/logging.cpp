@@ -6,22 +6,15 @@
 
 namespace yonaa::logging {
 
-namespace detail {
+void init(std::string_view app_name, log_level log_level) {
+    auto internal_logger = spdlog::stdout_color_mt("yonaa");
+    internal_logger->set_pattern("%^[%T] %n: %v%$");
+    internal_logger->set_level(static_cast<spdlog::level::level_enum>(log_level));
 
-std::shared_ptr<spdlog::logger> internal_logger_ = nullptr;
-
-std::shared_ptr<spdlog::logger> app_logger_ = nullptr;
-
-}  // namespace detail
-
-void init(log_level log_level) {
-    spdlog::set_level(static_cast<spdlog::level::level_enum>(log_level));
-
-    detail::internal_logger = spdlog::stdout_color_mt("yonaa");
-    detail::internal_logger->set_pattern("%^[%T] %n: %v%$");
-
-    detail::app_logger = spdlog::stdout_color_mt("app");
-    detail::app_logger->set_pattern("%^[%T] %n: %v%$");
+    detail::app_name = app_name.data();
+    auto app_logger = spdlog::stdout_color_mt(app_name.data());
+    app_logger->set_pattern("%^[%T] %n: %v%$");
+    app_logger->set_level(static_cast<spdlog::level::level_enum>(log_level));
 }
 
 }  // namespace yonaa::logging

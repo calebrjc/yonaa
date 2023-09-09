@@ -9,6 +9,7 @@ project(
 # Build options
 option(YONAA_BUILD_TESTS "Build tests" OFF)
 option(YONAA_ENABLE_LOGGING "Enable logging" OFF)
+option(YONAA_BUILD_EXAMPLES "Build examples" OFF)
 
 # Ensure -std=c++xx instead of -std=g++xx
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -61,7 +62,9 @@ target_link_libraries(yonaa
 
 target_compile_features(yonaa PUBLIC cxx_std_17)
 
-target_compile_options(yonaa PRIVATE -Wall -Wno-unknown-pragmas -Wextra --pedantic-errors)
+target_compile_options(yonaa 
+    PRIVATE -Wall -Wextra --pedantic-errors
+    PUBLIC -Wno-unknown-pragmas)
 
 if (YONAA_ENABLE_LOGGING)
     target_compile_definitions(yonaa PUBLIC YONAA_ENABLE_LOGGING)
@@ -71,4 +74,9 @@ endif()
 if(YONAA_BUILD_TESTS)
     add_subdirectory(test)
     enable_testing()
+endif()
+
+# Conditionally enable examples
+if(YONAA_BUILD_EXAMPLES)
+    add_subdirectory(example)
 endif()
