@@ -32,7 +32,7 @@ socket_status_mask poll_socket(socket_type socket_fd, int timeout_millis) {
     return (num_events > 0) ? detail::ssm_from_revents(pfd.revents) : socket_status::none;
 }
 
-poll_group::poll_group(socket_status_mask config) {
+poll_group::poll_group(socket_status_mask config) : pfd_config_(0) {
     pfd_config_ |= (config & socket_status::readable) ? POLLIN : 0;
     pfd_config_ |= (config & socket_status::writable) ? POLLOUT : 0;
 }
